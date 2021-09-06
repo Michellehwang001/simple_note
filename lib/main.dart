@@ -1,11 +1,11 @@
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_note/pages/signin_page.dart';
 
 void main() async {
-  // firebase를 사용하기 위해.
+  // firebase를 사용하기 위해 초기화
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp();
 
   runApp(MyApp());
 }
