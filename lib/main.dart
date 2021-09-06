@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_note/pages/signin_page.dart';
+import 'package:equatable/equatable.dart';
 
 void main() async {
   // firebase를 사용하기 위해 초기화
@@ -11,7 +12,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
