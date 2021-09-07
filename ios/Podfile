@@ -1,4 +1,6 @@
 # Uncomment this line to define a global platform for your project
+# add pods for desired Firebase products
+# https://firebase.google.com/docs/ios/setup#available-pods
 platform :ios, '11.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
