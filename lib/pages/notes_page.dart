@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NotesPage extends StatefulWidget {
+  static const String routeName = 'note-page';
   const NotesPage({Key? key}) : super(key: key);
 
   @override

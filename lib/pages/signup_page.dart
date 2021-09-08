@@ -19,6 +19,12 @@ class _SignupPageState extends State<SignupPage> {
   String _email = '';
   String _passwd = '';
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   void _submit() {
     setState(() {
       autovalidateMode = AutovalidateMode.always;
@@ -168,9 +174,11 @@ class _SignupPageState extends State<SignupPage> {
                       height: 20.0,
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       child: Text(
-                        'No account? Sign Up!',
+                        'Have an account? Sign In!',
                         style: TextStyle(
                             fontSize: 18.0,
                             decoration: TextDecoration.underline),

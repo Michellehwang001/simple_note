@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_note/pages/signup_page.dart';
 
 class SigninPage extends StatefulWidget {
   static const String routeName = 'signin-page';
@@ -116,7 +117,9 @@ class _SigninPageState extends State<SigninPage> {
                       height: 20.0,
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, SignupPage.routeName);
+                      },
                       child: Text(
                         'No account? Sign Up!',
                         style: TextStyle(
