@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_note/providers/auth_provider.dart';
+import 'package:simple_note/widgets/error_dialog.dart';
 
 class SignupPage extends StatefulWidget {
   static const String routeName = 'signup-page';
@@ -43,10 +45,10 @@ class _SignupPageState extends State<SignupPage> {
       await context
           .read<AuthProvider>()
           .signUp(context, name: _name, email: _email, password: _passwd);
-    } catch(e) {
+    } on FirebaseException catch(e) {
       print('Error : $e');
+      errorDialog(context, e);
     }
-    print('name: $_name, email: $_email, password: $_passwd');
   }
 
   @override
