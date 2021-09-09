@@ -45,7 +45,7 @@ class _SignupPageState extends State<SignupPage> {
       await context
           .read<AuthProvider>()
           .signUp(context, name: _name, email: _email, password: _passwd);
-    } on FirebaseException catch(e) {
+    } on FirebaseAuthException catch(e) {
       print('Error : $e');
       errorDialog(context, e);
     }

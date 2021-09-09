@@ -34,7 +34,7 @@ class _SigninPageState extends State<SigninPage> {
       await context
           .read<AuthProvider>()
           .signIn(email: _email, password: _passwd);
-    } on FirebaseException catch (e) {
+    } on FirebaseAuthException catch (e) {
       print('Error : $e');
       errorDialog(context, e);
     }
