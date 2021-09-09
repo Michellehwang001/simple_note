@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_note/pages/signup_page.dart';
+import 'package:provider/provider.dart';
+import 'package:simple_note/providers/auth_provider.dart';
 
 class SigninPage extends StatefulWidget {
   static const String routeName = 'signin-page';
@@ -17,7 +19,7 @@ class _SigninPageState extends State<SigninPage> {
   String _email = '';
   String _passwd = '';
 
-  void _submit() {
+  Future<void> _submit() async {
     setState(() {
       autovalidateMode = AutovalidateMode.always;
     });
@@ -26,11 +28,20 @@ class _SigninPageState extends State<SigninPage> {
 
     _fKey.currentState!.save();
 
+    try {
+      await context
+          .read<AuthProvider>()
+          .signIn(email: _email, password: _passwd);
+    } catch (e) {
+      print('Error: $e');
+    }
+
     print('email: $_email, password: $_passwd');
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.watch<AuthProvider>().state;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -106,13 +117,13 @@ class _SigninPageState extends State<SigninPage> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    TextButton(
-                      onPressed: _submit,
-                      child: Text(
-                        '로그인',
-                        style: TextStyle(fontSize: 20.0),
-                      ),
-                    ),
+                    OutlinedButton.icon(
+                        onPressed: authState.loading == true ? null : _submit,
+                        icon: Icon(Icons.send),
+                        label: Text(
+                          '로그인',
+                          style: TextStyle(fontSize: 20.0),
+                        )),
                     SizedBox(
                       height: 20.0,
                     ),

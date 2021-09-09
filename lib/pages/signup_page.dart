@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:simple_note/providers/auth_provider.dart';
 
 class SignupPage extends StatefulWidget {
   static const String routeName = 'signup-page';
@@ -25,20 +27,31 @@ class _SignupPageState extends State<SignupPage> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
+    // Check Validation
     setState(() {
       autovalidateMode = AutovalidateMode.always;
     });
 
     if (!_fKey.currentState!.validate()) return;
 
+    // save
     _fKey.currentState!.save();
 
+    // 회원가입
+    try {
+      await context
+          .read<AuthProvider>()
+          .signUp(context, name: _name, email: _email, password: _passwd);
+    } catch(e) {
+      print('Error : $e');
+    }
     print('name: $_name, email: $_email, password: $_passwd');
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.watch<AuthProvider>().state;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -114,7 +127,8 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       child: TextFormField(
                         controller: _passwordController,
-                        obscureText: true, // 글자 안보이게
+                        obscureText: true,
+                        // 글자 안보이게
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           filled: true,
@@ -163,8 +177,8 @@ class _SignupPageState extends State<SignupPage> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    TextButton(
-                      onPressed: _submit,
+                    OutlinedButton(
+                      onPressed: authState.loading == true ? null : _submit,
                       child: Text(
                         '회원가입',
                         style: TextStyle(fontSize: 20.0),

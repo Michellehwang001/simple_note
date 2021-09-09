@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 
 class AuthProgressState extends Equatable {
   final bool loading;
+
   AuthProgressState({required this.loading});
 
   // change loading 상태
@@ -25,7 +26,8 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProgressState state = AuthProgressState(loading: false);
 
-  Future<void> signUp(BuildContext context, {
+  Future<void> signUp(
+    BuildContext context, {
     required String name,
     required String email,
     required String password,
@@ -35,7 +37,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      firebaseAuth.UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      firebaseAuth.UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
       firebaseAuth.User? signedInUser = userCredential.user;
 
       await _firestore.collection('users').doc(signedInUser!.uid).set({
@@ -45,13 +48,33 @@ class AuthProvider extends ChangeNotifier {
 
       state = state.copyWith(loading: false);
       notifyListeners();
+
       Navigator.pop(context);
 
-    } catch(e) {
+    } catch (e) {
       print('Failed with error code: $e');
       state = state.copyWith(loading: false);
       notifyListeners();
       rethrow;
     }
+  }
+
+  Future<void> signIn({required String email, required String password}) async {
+    state = state.copyWith(loading: true);
+    notifyListeners();
+
+    try {
+      await _auth.signInWithEmailAndPassword(email: email.trim(), password: password.trim());
+      state = state.copyWith(loading: false);
+      notifyListeners();
+    } catch (e) {
+      state = state.copyWith(loading: false);
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  void signOut() {
+    _auth.signOut();
   }
 }
