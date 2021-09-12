@@ -46,7 +46,6 @@ class _SignupPageState extends State<SignupPage> {
           .read<AuthProvider>()
           .signUp(context, name: _name, email: _email, password: _passwd);
     } on FirebaseAuthException catch(e) {
-      print('Error : $e');
       errorDialog(context, e);
     }
   }
@@ -57,17 +56,17 @@ class _SignupPageState extends State<SignupPage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Your Notes',
                 style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20.0,
               ),
               Form(
@@ -81,7 +80,7 @@ class _SignupPageState extends State<SignupPage> {
                         vertical: 10.0,
                       ),
                       child: TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           filled: true,
                           labelText: '이름',
@@ -103,7 +102,7 @@ class _SignupPageState extends State<SignupPage> {
                         vertical: 10.0,
                       ),
                       child: TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           filled: true,
                           labelText: '이메일',
@@ -111,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         validator: (String? val) {
                           // 정규표현식으로 정교하게 체크 가능
-                          if (val == null || val.trim().length == 0) {
+                          if (val == null || val.trim().isEmpty) {
                             return '이메일을 입력해 주세요!';
                           }
                           if (!val.trim().contains('@')) {
@@ -131,7 +130,7 @@ class _SignupPageState extends State<SignupPage> {
                         controller: _passwordController,
                         obscureText: true,
                         // 글자 안보이게
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           filled: true,
                           labelText: '비밀번호',
@@ -139,7 +138,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         validator: (String? val) {
                           // 정규표현식으로 정교하게 체크 가능
-                          if (val == null || val.trim().length == 0) {
+                          if (val == null || val.trim().isEmpty) {
                             return '비밀번호를 입력해 주세요.';
                           }
                           if (val.trim().length < 6) {
@@ -157,7 +156,7 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       child: TextFormField(
                         obscureText: true, // 글자 안보이게
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           filled: true,
                           labelText: '비밀번호 확인',
@@ -165,7 +164,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         validator: (String? val) {
                           // 정규표현식으로 정교하게 체크 가능
-                          if (val == null || val.trim().length == 0) {
+                          if (val == null || val.trim().isEmpty) {
                             return '비밀번호 확인을 입력해 주세요.';
                           }
                           if (_passwordController.text != val) {
@@ -176,24 +175,24 @@ class _SignupPageState extends State<SignupPage> {
                         onSaved: (val) => _passwd = val ?? '',
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     OutlinedButton(
                       onPressed: authState.loading == true ? null : _submit,
-                      child: Text(
+                      child: const Text(
                         '회원가입',
                         style: TextStyle(fontSize: 20.0),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text(
+                      child: const Text(
                         'Have an account? Sign In!',
                         style: TextStyle(
                             fontSize: 18.0,

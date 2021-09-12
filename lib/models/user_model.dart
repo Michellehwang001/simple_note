@@ -7,7 +7,7 @@ class User extends Equatable {
   final String name;
   final String email;
 
-  User({required this.id, required this.name, required this.email});
+  const User({required this.id, required this.name, required this.email});
 
   // // factory Constructor
   factory User.fromDoc(DocumentSnapshot userDoc) {

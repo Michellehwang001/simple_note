@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_note/pages/home_page.dart';
 import 'package:simple_note/pages/notes_page.dart';
 import 'package:simple_note/pages/signin_page.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:simple_note/pages/signup_page.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
 import 'package:simple_note/providers/auth_provider.dart';
 
 void main() async {
@@ -15,26 +16,28 @@ void main() async {
   runApp(
     MultiProvider(
         providers: [
-          StreamProvider<firebaseAuth.User?>.value(
-            value: firebaseAuth.FirebaseAuth.instance.authStateChanges(), initialData: null,
+          StreamProvider<firebase_auth.User?>.value(
+            value: firebase_auth.FirebaseAuth.instance.authStateChanges(), initialData: null,
           ),
           ChangeNotifierProvider.value(
             value: AuthProvider(),
           ),
         ],
-        child: MyApp(),
+        child: const MyApp(),
     ),
   );
   // runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   // 로그인 유무 체크
   isAuthenticated(BuildContext context) {
-    if (context.watch<firebaseAuth.User?>() != null) {
-      return NotesPage();
+    if (context.watch<firebase_auth.User?>() != null) {
+      return const HomePage();
     }
-    return SigninPage();
+    return const SigninPage();
   }
 
   @override
@@ -49,9 +52,9 @@ class MyApp extends StatelessWidget {
         ),
         home: isAuthenticated(context),
         routes: {
-          SigninPage.routeName: (context) => SigninPage(),
-          SignupPage.routeName: (context) => SignupPage(),
-          NotesPage.routeName: (context) => NotesPage(),
+          SigninPage.routeName: (context) => const SigninPage(),
+          SignupPage.routeName: (context) => const SignupPage(),
+          NotesPage.routeName: (context) => const NotesPage(),
         },
       );
   }

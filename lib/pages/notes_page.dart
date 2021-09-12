@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_note/providers/auth_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class NotesPage extends StatefulWidget {
   static const String routeName = 'note-page';
@@ -15,24 +15,24 @@ class NotesPage extends StatefulWidget {
 class _NotesPageState extends State<NotesPage> {
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<firebaseAuth.User?>();
+    final user = context.watch<firebase_auth.User?>();
 
     print (user!.uid);
 
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notes'),
+        title: const Text('Notes'),
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               context.read<AuthProvider>().signOut();
             },
           )
         ],
       ),
-      body: Center(
+      body: const Center(
         child: Text('Notes'),
       ),
     );

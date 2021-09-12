@@ -46,17 +46,17 @@ class _SigninPageState extends State<SigninPage> {
 
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Your Notes',
                 style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20.0,
               ),
               Form(
@@ -70,7 +70,7 @@ class _SigninPageState extends State<SigninPage> {
                         vertical: 10.0,
                       ),
                       child: TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           filled: true,
                           labelText: 'Email',
@@ -78,7 +78,7 @@ class _SigninPageState extends State<SigninPage> {
                         ),
                         validator: (String? val) {
                           // 정규표현식으로 정교하게 체크 가능
-                          if (val == null || val.trim().length == 0) {
+                          if (val == null || val.trim().isEmpty) {
                             return '이메일을 입력해 주세요!';
                           }
                           if (!val.trim().contains('@')) {
@@ -96,7 +96,7 @@ class _SigninPageState extends State<SigninPage> {
                       ),
                       child: TextFormField(
                         obscureText: true, // 글자 안보이게
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           filled: true,
                           labelText: 'Password',
@@ -104,7 +104,7 @@ class _SigninPageState extends State<SigninPage> {
                         ),
                         validator: (String? val) {
                           // 정규표현식으로 정교하게 체크 가능
-                          if (val == null || val.trim().length == 0) {
+                          if (val == null || val.trim().isEmpty) {
                             return '비밀번호를 입력해 주세요.';
                           }
                           if (val.trim().length < 6) {
@@ -115,24 +115,24 @@ class _SigninPageState extends State<SigninPage> {
                         onSaved: (val) => _passwd = val ?? '',
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     OutlinedButton.icon(
                         onPressed: authState.loading == true ? null : _submit,
-                        icon: Icon(Icons.send),
-                        label: Text(
+                        icon: const Icon(Icons.send),
+                        label: const Text(
                           '로그인',
                           style: TextStyle(fontSize: 20.0),
                         )),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.pushNamed(context, SignupPage.routeName);
                       },
-                      child: Text(
+                      child: const Text(
                         'No account? Sign Up!',
                         style: TextStyle(
                             fontSize: 18.0,

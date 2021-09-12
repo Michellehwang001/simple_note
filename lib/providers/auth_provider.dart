@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart'
-    as firebaseAuth; // firebase에도 User모델이 있음.
+    as firebase_auth; // firebase에도 User모델이 있음.
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthProgressState extends Equatable {
   final bool loading;
 
-  AuthProgressState({required this.loading});
+  const AuthProgressState({required this.loading});
 
   // change loading 상태
   AuthProgressState copyWith({bool? loading}) {
@@ -21,10 +21,10 @@ class AuthProgressState extends Equatable {
 
 // State의 변화를 알려주기위해
 class AuthProvider extends ChangeNotifier {
-  final _auth = firebaseAuth.FirebaseAuth.instance;
+  final _auth = firebase_auth.FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
 
-  AuthProgressState state = AuthProgressState(loading: false);
+  AuthProgressState state = const AuthProgressState(loading: false);
 
   Future<void> signUp(
     BuildContext context, {
@@ -37,9 +37,9 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      firebaseAuth.UserCredential userCredential = await _auth
+      firebase_auth.UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      firebaseAuth.User? signedInUser = userCredential.user;
+      firebase_auth.User? signedInUser = userCredential.user;
 
       await _firestore.collection('users').doc(signedInUser!.uid).set({
         'name': name,
@@ -52,7 +52,6 @@ class AuthProvider extends ChangeNotifier {
       Navigator.pop(context);
 
     } catch (e) {
-      print('Failed with error code: $e');
       state = state.copyWith(loading: false);
       notifyListeners();
       rethrow;

@@ -8,7 +8,7 @@ class Note extends Equatable {
   final String noteOwnerId;
   final Timestamp timestamp;
 
-  Note({required this.id, required this.title, required this.desc,
+  const Note({required this.id, required this.title, required this.desc,
     required this.noteOwnerId, required this.timestamp});
 
   // factory Constructor
