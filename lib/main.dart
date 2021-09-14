@@ -7,6 +7,7 @@ import 'package:simple_note/pages/signin_page.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:simple_note/pages/signup_page.dart';
 import 'package:simple_note/providers/auth_provider.dart';
+import 'package:simple_note/providers/note_provider.dart';
 
 void main() async {
   // firebase를 사용하기 위해 초기화
@@ -15,15 +16,19 @@ void main() async {
 
   runApp(
     MultiProvider(
-        providers: [
-          StreamProvider<firebase_auth.User?>.value(
-            value: firebase_auth.FirebaseAuth.instance.authStateChanges(), initialData: null,
-          ),
-          ChangeNotifierProvider.value(
-            value: AuthProvider(),
-          ),
-        ],
-        child: const MyApp(),
+      providers: [
+        StreamProvider<firebase_auth.User?>.value(
+          value: firebase_auth.FirebaseAuth.instance.authStateChanges(),
+          initialData: null,
+        ),
+        ChangeNotifierProvider<AuthProvider>(
+          create: (context) => AuthProvider(),
+        ),
+        ChangeNotifierProvider<NoteList>(
+          create: (context) => NoteList(),
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
   // runApp(MyApp());
@@ -42,20 +47,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
-        title: 'Note',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: isAuthenticated(context),
-        routes: {
-          SigninPage.routeName: (context) => const SigninPage(),
-          SignupPage.routeName: (context) => const SignupPage(),
-          NotesPage.routeName: (context) => const NotesPage(),
-        },
-      );
+      title: 'Note',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: isAuthenticated(context),
+      routes: {
+        SigninPage.routeName: (context) => const SigninPage(),
+        SignupPage.routeName: (context) => const SignupPage(),
+        NotesPage.routeName: (context) => const NotesPage(),
+      },
+    );
   }
 }

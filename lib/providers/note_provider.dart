@@ -18,7 +18,7 @@ class NoteListState extends Equatable {
 
   NoteListState copyWith({required bool loading, List<Note>? notes}) {
     return NoteListState(
-        loading: loading ?? this.loading, notes: notes ?? this.notes);
+        loading: loading, notes: notes ?? this.notes);
   }
 
   @override

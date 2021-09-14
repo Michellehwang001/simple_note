@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Note extends Equatable {
-  final String id;
+  final String? id;
   final String title;
   final String desc;
   final String noteOwnerId;
   final Timestamp timestamp;
 
-  const Note({required this.id, required this.title, required this.desc,
+  const Note({this.id, required this.title, required this.desc,
     required this.noteOwnerId, required this.timestamp});
 
   // factory Constructor
