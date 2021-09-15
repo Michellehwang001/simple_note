@@ -86,10 +86,39 @@ class _NotesPageState extends State<NotesPage> {
       itemCount: noteList.notes.length,
       itemBuilder: (BuildContext context, int index) {
         final note = noteList.notes[index];
+
         return Dismissible(
           key: ValueKey(note.id),
-          onDismissed: (_) {},
-          // confirmDismiss: (_) {},
+          onDismissed: (_) async {
+            try {
+              print('delete mode!!! ');
+              await context.read<NoteList>().removeNote(note);
+            } on Exception catch (e) {
+              errorDialog(context, e);
+            }
+          },
+          confirmDismiss: (_) async {
+            return await showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('삭제하시겠습니까?'),
+                  content: const Text('삭제하시면 복구할 수 없습니다. \n삭제하시겠습니까?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('예'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('아니오'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
           background: showDismissibleBackground(0),
           secondaryBackground: showDismissibleBackground(1),
           child: Card(
@@ -116,7 +145,7 @@ class _NotesPageState extends State<NotesPage> {
     return Container(
       margin: const EdgeInsets.all(4.0),
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      color: Colors.red,
+      color: Colors.deepOrange,
       alignment: i == 0 ? Alignment.centerLeft : Alignment.centerRight,
       child: const Icon(
         Icons.delete,
