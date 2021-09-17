@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_note/models/note_model.dart';
 import 'package:simple_note/pages/add_edit_note_page.dart';
 import 'package:simple_note/providers/auth_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -28,7 +26,7 @@ class _NotesPageState extends State<NotesPage> {
 
       try {
         print(userId);
-        await context.read<NoteList>().getAllNotes(userId);
+        await context.read<NoteProvider>().getAllNotes(userId);
       } on Exception catch (e) {
         errorDialog(context, e);
       }
@@ -39,7 +37,7 @@ class _NotesPageState extends State<NotesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final noteList = context.watch<NoteList>().state;
+    final noteList = context.watch<NoteProvider>().state;
 
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +90,7 @@ class _NotesPageState extends State<NotesPage> {
           onDismissed: (_) async {
             try {
               print('delete mode!!! ');
-              await context.read<NoteList>().removeNote(note);
+              await context.read<NoteProvider>().removeNote(note);
             } on Exception catch (e) {
               errorDialog(context, e);
             }

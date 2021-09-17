@@ -14,7 +14,10 @@ class User extends Equatable {
     final userData = userDoc.data();
 
     // name: (userData as Map)['name'] --> 한참 헤맸음....
-    return User(id: userDoc.id, name: (userData as Map)['name'], email: userData['email']);
+    return User(
+        id: userDoc.id,
+        name: (userData as Map)['name'],
+        email: userData['email']);
   }
 
   Map<String, dynamic> toJson() {

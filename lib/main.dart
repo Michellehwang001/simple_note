@@ -24,8 +24,8 @@ void main() async {
         ChangeNotifierProvider<AuthProvider>(
           create: (context) => AuthProvider(),
         ),
-        ChangeNotifierProvider<NoteList>(
-          create: (context) => NoteList(),
+        ChangeNotifierProvider<NoteProvider>(
+          create: (context) => NoteProvider(),
         ),
       ],
       child: const MyApp(),

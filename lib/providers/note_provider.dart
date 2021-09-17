@@ -28,7 +28,7 @@ class NoteListState extends Equatable {
   List<Object?> get props => [loading, notes];
 }
 
-class NoteList extends ChangeNotifier {
+class NoteProvider extends ChangeNotifier {
   NoteListState state = const NoteListState(loading: false, notes: []);
 
   void handleError(Exception e) {

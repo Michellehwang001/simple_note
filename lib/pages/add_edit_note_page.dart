@@ -44,7 +44,7 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
           timestamp: Timestamp.fromDate(DateTime.now()),
         );
         // add
-        await context.read<NoteList>().addNote(newNote);
+        await context.read<NoteProvider>().addNote(newNote);
       } else {
         // 수정 note는 있다고 본다
         final newNote = Note(
@@ -55,7 +55,7 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
           timestamp: widget.note!.timestamp,
         );
         // edit
-        await context.read<NoteList>().updateNote(newNote);
+        await context.read<NoteProvider>().updateNote(newNote);
       }
 
       Navigator.pop(context);
@@ -66,7 +66,7 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
 
   @override
   Widget build(BuildContext context) {
-    final noteState = context.watch<NoteList>().state;
+    final noteState = context.watch<NoteProvider>().state;
 
     return Scaffold(
       appBar: AppBar(
