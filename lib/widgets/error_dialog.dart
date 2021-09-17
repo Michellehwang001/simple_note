@@ -42,7 +42,7 @@ void errorDialog(BuildContext context, Exception e) {
             title: Text(errorTitle),
               content: Text(errorPlugin + '\n' + errorMessage),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
             ],
           );
         }

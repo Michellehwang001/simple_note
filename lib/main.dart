@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:simple_note/pages/signup_page.dart';
 import 'package:simple_note/providers/auth_provider.dart';
 import 'package:simple_note/providers/note_provider.dart';
+import 'package:simple_note/providers/profile_provider.dart';
 
 void main() async {
   // firebase를 사용하기 위해 초기화
@@ -26,6 +27,9 @@ void main() async {
         ),
         ChangeNotifierProvider<NoteProvider>(
           create: (context) => NoteProvider(),
+        ),
+        ChangeNotifierProvider<ProfileProvider>(
+          create: (context) => ProfileProvider(),
         ),
       ],
       child: const MyApp(),
