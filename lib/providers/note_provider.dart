@@ -17,8 +17,7 @@ class NoteListState extends Equatable {
   const NoteListState({required this.loading, required this.notes});
 
   NoteListState copyWith({required bool loading, List<Note>? notes}) {
-    return NoteListState(
-        loading: loading, notes: notes ?? this.notes);
+    return NoteListState(loading: loading, notes: notes ?? this.notes);
   }
 
   @override
@@ -57,6 +56,31 @@ class NoteProvider extends ChangeNotifier {
       notifyListeners();
     } on Exception catch (e) {
       handleError(e);
+      rethrow;
+    }
+  }
+
+  // search snapshot 두개를 하나로 묶어버린다.
+  Future<List<QuerySnapshot>> searchNotes(
+      String userId, String searchTerm) async {
+    print('searchTerm --> $searchTerm');
+    try {
+      final snapshotOne = notesRef
+          .doc(userId)
+          .collection('userNotes')
+          .where('title', isGreaterThanOrEqualTo: searchTerm)
+          .where('title', isLessThanOrEqualTo: searchTerm + 'z');
+
+      final snapshotTwo = notesRef
+          .doc(userId)
+          .collection('userNotes')
+          .where('desc', isGreaterThanOrEqualTo: searchTerm)
+          .where('desc', isLessThanOrEqualTo: searchTerm + 'z');
+
+      final userNotesSnapshot = await Future.wait([snapshotOne.get(), snapshotTwo.get()]);
+
+      return userNotesSnapshot;
+    } catch (e) {
       rethrow;
     }
   }

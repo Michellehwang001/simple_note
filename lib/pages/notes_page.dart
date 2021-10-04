@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_note/pages/add_edit_note_page.dart';
-import 'package:simple_note/providers/auth_provider.dart';
+import 'package:simple_note/pages/search_page.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:simple_note/providers/note_provider.dart';
 import 'package:simple_note/widgets/error_dialog.dart';
@@ -44,20 +44,25 @@ class _NotesPageState extends State<NotesPage> {
         title: const Text('Notes'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.search),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AddEditNotePage()),
-                );
+                context,
+                MaterialPageRoute(
+                    fullscreenDialog: true, builder: (context) => const SearchPage()),
+              );
             },
           ),
           IconButton(
-            icon: const Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.add),
             onPressed: () {
-              context.read<AuthProvider>().signOut();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AddEditNotePage()),
+              );
             },
-          )
+          ),
         ],
       ),
       body: _buildBody(noteList),
@@ -123,15 +128,19 @@ class _NotesPageState extends State<NotesPage> {
             child: ListTile(
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddEditNotePage(note: note)),
-                  );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddEditNotePage(note: note)),
+                );
               },
               title: Text(
                 note.title,
-                style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.w600),
               ),
-              subtitle: Text(note.timestamp.toDate().toIso8601String(),),
+              subtitle: Text(
+                note.timestamp.toDate().toIso8601String(),
+              ),
             ),
           ),
         );

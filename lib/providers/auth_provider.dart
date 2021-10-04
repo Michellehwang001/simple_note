@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     as firebase_auth; // firebase에도 User모델이 있음.
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -37,10 +38,12 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Registration
       firebase_auth.UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       firebase_auth.User? signedInUser = userCredential.user;
 
+      // users collection에 등록.
       await _firestore.collection('users').doc(signedInUser!.uid).set({
         'name': name,
         'email': email,
@@ -51,6 +54,15 @@ class AuthProvider extends ChangeNotifier {
 
       Navigator.pop(context);
 
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+      state = state.copyWith(loading: false);
+      notifyListeners();
+      rethrow;
     } catch (e) {
       state = state.copyWith(loading: false);
       notifyListeners();
