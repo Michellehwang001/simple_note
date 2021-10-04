@@ -5,6 +5,7 @@ import 'package:simple_note/pages/search_page.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:simple_note/providers/note_provider.dart';
 import 'package:simple_note/widgets/error_dialog.dart';
+import 'package:intl/intl.dart';
 
 class NotesPage extends StatefulWidget {
   static const String routeName = 'note-page';
@@ -139,7 +140,7 @@ class _NotesPageState extends State<NotesPage> {
                     fontSize: 16.0, fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                note.timestamp.toDate().toIso8601String(),
+                DateFormat('yyyy-MM-dd, hh:mm:ss').format(note.timestamp.toDate()),
               ),
             ),
           ),

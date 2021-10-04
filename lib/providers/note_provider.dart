@@ -63,7 +63,6 @@ class NoteProvider extends ChangeNotifier {
   // search snapshot 두개를 하나로 묶어버린다.
   Future<List<QuerySnapshot>> searchNotes(
       String userId, String searchTerm) async {
-    print('searchTerm --> $searchTerm');
     try {
       final snapshotOne = notesRef
           .doc(userId)
@@ -90,7 +89,7 @@ class NoteProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      DocumentReference docRef =
+      final DocumentReference docRef =
           await notesRef.doc(newNote.noteOwnerId).collection('userNotes').add({
         'title': newNote.title,
         'desc': newNote.desc,

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:simple_note/models/note_model.dart';
 import 'package:simple_note/pages/add_edit_note_page.dart';
 import 'package:simple_note/providers/note_provider.dart';
@@ -103,8 +104,6 @@ class _SearchPageState extends State<SearchPage> {
                   );
                 }
 
-                print(snapshot.data.length);
-
                 List<Note> foundNotes = [];
 
                 for (int i = 0; i < snapshot.data.length; i++) {
@@ -116,8 +115,6 @@ class _SearchPageState extends State<SearchPage> {
                 foundNotes = [
                   ...{...foundNotes}
                 ];
-
-                print(foundNotes.length);
 
                 if (foundNotes.isEmpty) {
                   return const Center(
@@ -161,6 +158,10 @@ class _SearchPageState extends State<SearchPage> {
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
                             ),
+                          ),
+                          subtitle: Text(
+                            DateFormat('yyyy-MM-dd, hh:mm:ss')
+                                .format(note.timestamp.toDate()),
                           ),
                         ),
                       );
