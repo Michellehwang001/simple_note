@@ -30,10 +30,70 @@ class NoteListState extends Equatable {
 class NoteProvider extends ChangeNotifier {
   NoteListState state = const NoteListState(loading: false, notes: []);
 
+  // 다음 노트가 있는지 알려줌 true: 있음, false: 없음
+  bool _hasNextDocs = true;
+
+  // getter
+  bool get hasNextDocs => _hasNextDocs;
+
   void handleError(Exception e) {
     print(e);
     state = state.copyWith(loading: false);
     notifyListeners();
+  }
+
+  // 한페이지만큼의 노트를 읽는다.
+  Future<void> getNotes(String userId, int limit) async {
+    state = state.copyWith(loading: true);
+    notifyListeners();
+
+    try {
+      // collection 정보는 QuerySnapshot 에 저장되고, Doc 정보는 DocumentSnapshot에 저장.
+      QuerySnapshot userNotesSnapshot;
+      DocumentSnapshot? startAfterDoc;
+
+      // 처음 불러오면 notes가 empty
+      if (state.notes.isNotEmpty) {
+        Note n = state.notes.last;
+        // 마지막 document를 읽어옴.
+        startAfterDoc =
+            await notesRef.doc(userId).collection('userNotes').doc(n.id).get();
+      } else {
+        // notes 가 비어있으면 null 값
+        startAfterDoc = null;
+      }
+
+      final refNotes = notesRef
+          .doc(userId)
+          .collection('userNotes')
+          .orderBy('timestamp', descending: true)
+          .limit(limit);
+
+      // 처음 읽는 것
+      if (startAfterDoc == null) {
+        userNotesSnapshot = await refNotes.get();
+      } else {
+        // startAfterDocument(10) 이 들어가면 11부터 읽어온다.
+        userNotesSnapshot =
+            await refNotes.startAfterDocument(startAfterDoc).get();
+      }
+
+      List<Note> notes = userNotesSnapshot.docs.map((noteDoc) {
+        return Note.fromDoc(noteDoc);
+      }).toList();
+
+      // 더 이상 읽을게 없음. 마지막.
+      if (userNotesSnapshot.docs.length < limit) {
+        _hasNextDocs = false;
+      }
+
+      state = state.copyWith(loading: false, notes: [...state.notes, ...notes]);
+      notifyListeners();
+
+    } on Exception catch (e) {
+      handleError(e);
+      rethrow;
+    }
   }
 
   // 모든 노트 다 읽어온다.
@@ -76,7 +136,8 @@ class NoteProvider extends ChangeNotifier {
           .where('desc', isGreaterThanOrEqualTo: searchTerm)
           .where('desc', isLessThanOrEqualTo: searchTerm + 'z');
 
-      final userNotesSnapshot = await Future.wait([snapshotOne.get(), snapshotTwo.get()]);
+      final userNotesSnapshot =
+          await Future.wait([snapshotOne.get(), snapshotTwo.get()]);
 
       return userNotesSnapshot;
     } catch (e) {

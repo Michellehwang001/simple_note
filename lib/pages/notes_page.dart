@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_note/constants/common_constants.dart';
 import 'package:simple_note/pages/add_edit_note_page.dart';
 import 'package:simple_note/pages/search_page.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -17,23 +18,53 @@ class NotesPage extends StatefulWidget {
 }
 
 class _NotesPageState extends State<NotesPage> {
-  String userId = 'guest';
+  String? userId;
+  final scrollController = ScrollController();
 
   @override
   void initState() {
+    super.initState();
+
+    // scrollController에 리스너 달기
+    scrollController.addListener(() {
+      print(
+          'scrollController.position.pixels: ${scrollController.position.pixels}');
+      print(
+          'scrollController.position.maxScrollExtent: ${scrollController.position.maxScrollExtent}');
+
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent &&
+          !scrollController.position.outOfRange) {
+        // 다음 도큐먼트가 있는지 확인
+        if (context.read<NoteProvider>().hasNextDocs) {
+          print(userId);
+
+          if (userId != null) {
+            context.read<NoteProvider>().getNotes(userId!, limitNotes);
+          }
+        }
+      }
+    });
+
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       final user = context.read<firebase_auth.User?>();
       userId = user!.uid;
 
       try {
-        print(userId);
-        await context.read<NoteProvider>().getAllNotes(userId);
+        if (userId != null) {
+          await context.read<NoteProvider>().getNotes(userId!, limitNotes);
+          // await context.read<NoteProvider>().getAllNotes(userId!);
+        }
       } on Exception catch (e) {
         errorDialog(context, e);
       }
     });
-    super.initState();
-    // 데이터를 읽어온다.
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -50,7 +81,8 @@ class _NotesPageState extends State<NotesPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    fullscreenDialog: true, builder: (context) => const SearchPage()),
+                    fullscreenDialog: true,
+                    builder: (context) => const SearchPage()),
               );
             },
           ),
@@ -71,7 +103,7 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Widget _buildBody(NoteListState noteList) {
-    if (noteList.loading) {
+    if (noteList.loading && noteList.notes.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(),
       );
@@ -86,66 +118,76 @@ class _NotesPageState extends State<NotesPage> {
       );
     }
 
-    return ListView.builder(
-      itemCount: noteList.notes.length,
-      itemBuilder: (BuildContext context, int index) {
-        final note = noteList.notes[index];
-
-        return Dismissible(
-          key: ValueKey(note.id),
-          onDismissed: (_) async {
-            try {
-              print('delete mode!!! ');
-              await context.read<NoteProvider>().removeNote(note);
-            } on Exception catch (e) {
-              errorDialog(context, e);
-            }
-          },
-          confirmDismiss: (_) async {
-            return await showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('삭제하시겠습니까?'),
-                  content: const Text('삭제하시면 복구할 수 없습니다. \n삭제하시겠습니까?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('예'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('아니오'),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-          background: showDismissibleBackground(0),
-          secondaryBackground: showDismissibleBackground(1),
-          child: Card(
-            child: ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddEditNotePage(note: note)),
-                );
-              },
-              title: Text(
-                note.title,
-                style: const TextStyle(
-                    fontSize: 16.0, fontWeight: FontWeight.w600),
-              ),
-              subtitle: Text(
-                DateFormat('yyyy-MM-dd, hh:mm:ss').format(note.timestamp.toDate()),
+    return ListView(
+      controller: scrollController,
+      children: [
+        ...noteList.notes.map((note) {
+          return Dismissible(
+            key: UniqueKey(),
+            // 위젯트리에 남아서 삭제시 에러 발생
+            // key: ValueKey(note.id),
+            onDismissed: (_) async {
+              try {
+                print('delete mode!!! ');
+                await context.read<NoteProvider>().removeNote(note);
+              } on Exception catch (e) {
+                errorDialog(context, e);
+              }
+            },
+            confirmDismiss: (_) async {
+              return await showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('삭제하시겠습니까?'),
+                    content: const Text('삭제하시면 복구할 수 없습니다. \n삭제하시겠습니까?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('예'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('아니오'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            background: showDismissibleBackground(0),
+            secondaryBackground: showDismissibleBackground(1),
+            child: Card(
+              child: ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AddEditNotePage(note: note)),
+                  );
+                },
+                title: Text(
+                  note.title,
+                  style: const TextStyle(
+                      fontSize: 16.0, fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text(
+                  DateFormat('yyyy-MM-dd, hh:mm:ss')
+                      .format(note.timestamp.toDate()),
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        }).toList(),
+        if (context.read<NoteProvider>().hasNextDocs)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 15.0),
+                child: CircularProgressIndicator(),
+              ),
+            ),
+      ],
     );
   }
 
